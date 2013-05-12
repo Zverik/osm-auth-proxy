@@ -8,6 +8,10 @@ Copy all files, including `.htaccess`, to a server directory. It would be best t
 
 Register the application [in OpenStreetMap](http://www.openstreetmap.org/user/username/oauth_clients/new) and put OAuth and database settings into `config.php`. Then run `createdb.php` and immediately after that delete it.
 
+## Example
+
+[An example usage](http://zverik.github.io/osm-auth-proxy/)) of the proxy service is published in the `gh-pages` branch.
+
 ## Translation
 
 Copy a file you understand in `lang` directory to your language name, for example, `it.php`. And translate it. Don't forget to create pull request.
