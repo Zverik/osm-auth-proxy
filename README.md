@@ -10,7 +10,7 @@ Register the application [in OpenStreetMap](http://www.openstreetmap.org/user/us
 
 ## Example
 
-[An example usage](http://zverik.github.io/osm-auth-proxy/)) of the proxy service is published in the `gh-pages` branch.
+[An example usage](http://zverik.github.io/osm-auth-proxy/) of the proxy service is published in the `gh-pages` branch.
 
 ## Translation
 
