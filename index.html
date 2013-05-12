@@ -1,0 +1,59 @@
+<html>
+<head>
+<title>Test OSM Auth Proxy</title>
+<script language="javascript">
+    function ajax(url, func) {
+        try { http.abort(); } catch(e) {}
+        var http = null;
+        if (window.XMLHttpRequest) {
+            http = new XMLHttpRequest();
+        } else if (window.ActiveXObject) { // Older IE.
+            http = new ActiveXObject("MSXML2.XMLHTTP.3.0");
+        }
+        http.onreadystatechange = function() {
+            if( http.readyState != 4 || http.status != 200 ) return;
+            var result = eval('('+http.responseText+')');
+            func(result);
+        };
+        http.open('GET', url, true);
+        http.send(null);
+    }
+
+    function test() {
+        document.getElementById('result').innerText = '';
+        var token = document.getElementById('token').value;
+        document.getElementById('token').value = '';
+        if( !token ) return;
+        ajax('http://auth.osmz.ru/'+token+'?format=json', function(res) {
+            var str = '';
+            if( res['error'] )
+                str = 'Error: ' + res['error'];
+            else if( res['id'] ) {
+                str = 'You are '+res['name']+' (#'+res['id']+')';
+            } else 
+                str = 'Something strange happened.';
+            document.getElementById('result').innerText = str;
+        });
+    }
+</script>
+<style>
+    body {
+        font-size: 14pt;
+        width: 500px;
+        margin: 100px auto 0;
+    }
+    #form { margin-top: 2em; }
+    input { font-size: 14pt; }
+    #result { font-weight: bold; }
+</style>
+</head>
+<body>
+    <h1>OSM Auth Proxy Test</h1>
+    <p>Enter a token and see what it resolves to. To manage your tokens visit <a href="http://auth.osmz.ru/">auth.osmz.ru</a>.</p>
+<form id="form">
+Token: <input type="text" size="20" id="token"> <input type="submit" value="Check" onclick="javascript:test(); return false;">
+</form>
+<div id="result"></div>
+<script language="javascript">document.getElementById('token').focus();</script>
+</body>
+</html>
