@@ -24,7 +24,7 @@ It will expire immediately after having been used. Those tokens are generated in
 Like a master token, those also can be <a href="/newtokens">reissued</a>, all at once.</p>
 <? if( count($tokens) > 0 ) { ?>
 <div class="copy" id="copyo" data-clipboard-target="copyosrc">Copy</div>
-<textarea id="copyosrc" class="hidden"><?=implode("\n", $tokens) ?></textarea>
+<textarea id="copyosrc" class="hidden"><?=$tokens[0] ?></textarea>
 <script language="javascript">attachClipboard('copyo');</script>
 <div class="hidelink" onclick="javascript:replace(this, 'onetime');">Show One-Time Tokens</div>
     <div class="token hidden" id="onetime">

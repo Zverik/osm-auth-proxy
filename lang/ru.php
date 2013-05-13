@@ -24,7 +24,7 @@ function print_page( $user, $master, $tokens ) { ?>
 Как и главный токен, одноразовые можно <a href="/newtokens">перевыпустить</a>, все сразу.</p>
 <? if( count($tokens) > 0 ) { ?>
 <div class="copy" id="copyo" data-clipboard-target="copyosrc">В буфер</div>
-<textarea id="copyosrc" class="hidden"><?=implode("\n", $tokens) ?></textarea>
+<textarea id="copyosrc" class="hidden"><?=$tokens[0] ?></textarea>
 <script language="javascript">attachClipboard('copyo');</script>
 <div class="hidelink" onclick="javascript:replace(this, 'onetime');">Показать одноразовые токены</div>
     <div class="token hidden" id="onetime">
