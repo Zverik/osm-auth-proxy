@@ -5,5 +5,5 @@ RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^ - [L]
 
 RewriteRule ^([a-z]{5,9})$ web.php?action=$1 [QSA,L]
-RewriteRule ^([a-zA-Z0-9]+)$ auth.php?token=$1 [QSA,L]
+RewriteRule ^get$ auth.php [QSA,L]
 RewriteRule .* web.php [L]
