@@ -24,7 +24,7 @@
         var token = document.getElementById('token').value;
         document.getElementById('token').value = '';
         if( !token ) return;
-        ajax('http://auth.osmz.ru/'+token+'?format=json', function(res) {
+        ajax('http://auth.osmz.ru/get?token='+token+'&format=json', function(res) {
             var str = '';
             if( res['error'] )
                 str = 'Error: ' + res['error'];
