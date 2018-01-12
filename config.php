@@ -1,13 +1,13 @@
 <? // OSM Auth Proxy configuration file. Written by Ilya Zverev, licensed WTFPL.
 
-// OpenStreetMap OAuth parameters, see http://wiki.openstreetmap.org/wiki/OAuth
+// OpenStreetMap OAuth parameters, see https://wiki.openstreetmap.org/wiki/OAuth
 const CLIENT_ID     = '';
 const CLIENT_SECRET = '';
 
-const AUTHORIZATION_ENDPOINT = 'http://www.openstreetmap.org/oauth/authorize';
-const TOKEN_ENDPOINT         = 'http://www.openstreetmap.org/oauth/access_token';
-const REQUEST_ENDPOINT       = 'http://www.openstreetmap.org/oauth/request_token';
-const OSM_API                = 'http://api.openstreetmap.org/api/0.6/';
+const AUTHORIZATION_ENDPOINT = 'https://www.openstreetmap.org/oauth/authorize';
+const TOKEN_ENDPOINT         = 'https://www.openstreetmap.org/oauth/access_token';
+const REQUEST_ENDPOINT       = 'https://www.openstreetmap.org/oauth/request_token';
+const OSM_API                = 'https://api.openstreetmap.org/api/0.6/';
 
 // Database credentials
 const DB_HOST     = 'localhost';
