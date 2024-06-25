@@ -1,4 +1,5 @@
 <?php // OSM Authentication Proxy web interface. Written by Ilya Zverev, licensed WTFPL
+require __DIR__ . '/../vendor/autoload.php';
 require('config.php');
 
 $session_lifetime = 365 * 24 * 3600; // a year
