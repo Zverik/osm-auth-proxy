@@ -1,4 +1,4 @@
-<? // OSM Authentication Proxy. Written by Ilya Zverev, licensed WTFPL.
+<?php // OSM Authentication Proxy. Written by Ilya Zverev, licensed WTFPL.
 require('config.php');
 
 header('Access-Control-Allow-Origin: *'); // CORS

@@ -1,0 +1,9 @@
+{
+    "name": "zverik/osm-auth-proxy",
+    "description": "OpenStreetMap Authentication Proxy",
+    "type": "project",
+    "require": {
+        "jbelien/oauth2-openstreetmap": "^0.1.2"
+    },
+    "license": "WTFPL"
+}

@@ -1,0 +1,17 @@
+<?php // OSM Auth Proxy configuration file.
+
+// OpenStreetMap OAuth parameters, see https://wiki.openstreetmap.org/wiki/OAuth
+const CLIENT_ID     = '';
+const CLIENT_SECRET = '';
+
+// Database credentials
+const DB_HOST     = 'localhost';
+const DB_USER     = 'zverik';
+const DB_PASSWORD = '';
+const DB_DATABASE = 'osmauth';
+
+// Miscellaneous
+const TOKEN_LENGTH = 10;
+const MAX_ONETIME_TOKENS = 5;
+
+?>

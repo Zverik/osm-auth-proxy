@@ -1,16 +1,18 @@
 # OpenStreetMap Authentication Proxy
 
-The service is extensively described on its main instance, http://auth.osmz.ru/.
+The service is extensively described on its main instance, https://auth.osmz.ru/.
 
 ## Installation
 
 Copy all files, including `.htaccess`, to a server directory. It would be best to place it at the domain level, or else you'll have to tweak links in `web.php`.
 
-Register the application [in OpenStreetMap](http://www.openstreetmap.org/user/username/oauth_clients/new) and put OAuth and database settings into `config.php`. Then run `createdb.php` and immediately after that delete it.
+Register the application [in OpenStreetMap](https://www.openstreetmap.org/oauth2/applications)
+and put OAuth and database settings into `config.php`.
+Then run `php scripts/createdb.php`.
 
 ## Example
 
-[An example usage](http://zverik.github.io/osm-auth-proxy/) of the proxy service is published in the `gh-pages` branch.
+[An example usage](https://zverik.github.io/osm-auth-proxy/) of the proxy service is published in the `gh-pages` branch.
 
 ## Translation
 

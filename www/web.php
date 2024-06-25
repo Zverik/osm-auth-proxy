@@ -1,61 +1,63 @@
-<? // OSM Authentication Proxy web interface. Written by Ilya Zverev, licensed WTFPL
+<?php // OSM Authentication Proxy web interface. Written by Ilya Zverev, licensed WTFPL
 require('config.php');
+
+$session_lifetime = 365 * 24 * 3600; // a year
+session_set_cookie_params($session_lifetime);
+session_start([
+  'cookie_lifetime' => $session_lifetime,
+  'use_only_cookies' => true,
+  'use_strict_mode' => true,
+]);
+
 header('Content-type: text/html; charset=utf-8');
-ini_set('session.gc_maxlifetime', 7776000);
-ini_set('session.cookie_lifetime', 7776000);
-session_set_cookie_params(7776000);
-session_start();
 $user_id = isset($_SESSION['osm_user_id']) ? $_SESSION['osm_user_id'] : 0;
-$redirect = 'http://'.$_SERVER['HTTP_HOST'].rtrim(dirname($_SERVER['PHP_SELF']), '/\\').'/';
+$redirect = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].rtrim(dirname($_SERVER['PHP_SELF']), '/\\').'/';
 
 $db = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 if( $db->connect_errno )
     die('Cannot connect to database: ('.$db->connect_errno.') '.$db->connect_error);
 $db->set_charset('utf8');
 
+function oauth_make() {
+  global $redirect;
+  return new \JBelien\OAuth2\Client\Provider\OpenStreetMap([
+      'clientId'     => CLIENT_ID,
+      'clientSecret' => CLIENT_SECRET,
+      'redirectUri'  => $redirect.'oauth',
+      'dev'          => false
+  ]);
+}
+
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 if( $action == 'login' ) {
-    try {
-         $oauth = new OAuth(CLIENT_ID,CLIENT_SECRET,OAUTH_SIG_METHOD_HMACSHA1,OAUTH_AUTH_TYPE_URI);
-         $request_token_info = $oauth->getRequestToken(REQUEST_ENDPOINT);
-         $_SESSION['secret'] = $request_token_info['oauth_token_secret'];
-         header('Location: '.AUTHORIZATION_ENDPOINT."?oauth_token=".$request_token_info['oauth_token']);
-    } catch(OAuthException $E) {
-         print_r($E);
-    }
+    $oauth = oauth_make();
+    $options = ['scope' => 'read_prefs'];
+    $auth_url = $oauth->getAuthorizationUrl($options);
+    $_SESSION['oauth2state'] = $oauth->getState();
+    header('Location: '.$auth_url);
     exit;
 } elseif( $action == 'oauth' ) {
-    if(!isset($_GET['oauth_token']))
-        error("No OAuth token given");
+    if(empty($_GET['code'])) {
+        error("Error: there is no OAuth code.");
+    } elseif(empty($_SESSION['oauth2state'])) {
+        error("Error: there is no OAuth state.");
+    } elseif(empty($_GET['state']) || $_GET['state'] != $_SESSION['oauth2state']) {
+        error("Error: invalid state.");
+    } else {
+        unset($_SESSION['oauth2state']);
+        $oauth = oauth_make();
+        $accessToken = $oauth->getAccessToken(
+          'authorization_code', ['code' => $_GET['code']]
+        );
+        $resourceOwner = $oauth->getResourceOwner($accessToken);
 
-    if(!isset($_SESSION['secret']))
-        error("No OAuth secret given");
-
-    try {
-        $oauth = new OAuth(CLIENT_ID, CLIENT_SECRET, OAUTH_SIG_METHOD_HMACSHA1, OAUTH_AUTH_TYPE_URI);
-        $oauth->enableDebug();
-
-        $oauth->setToken($_GET['oauth_token'], $_SESSION['secret']);
-        $access_token_info = $oauth->getAccessToken(TOKEN_ENDPOINT);
-
-        $token = strval($access_token_info['oauth_token']);
-        $secret = strval($access_token_info['oauth_token_secret']);
-
-        $oauth->setToken($token, $secret);
-
-        $oauth->fetch(OSM_API."user/details");
-        $user_details = $oauth->getLastResponse();
-
-        $xml = simplexml_load_string($user_details);
-        $user_id = intval($xml->user['id']);
+        $user_id = intval($resourceOwner->getId());
         if( !$user_id )
-            error('OSM API returned '.$xml->user['id'].' for user id');
-        $user_name = $db->escape_string(strval($xml->user['display_name']));
-        $created = $db->escape_string(strval($xml->user['account_created']));
+            error('OSM API returned no user id');
+        $user_name = $db->escape_string($resourceOwner->getDisplayName());
+        $created = $db->escape_string($resourceOwner->getAccountCreated());
 
-        $langs_a = array();
-        foreach( $xml->user->languages->lang as $lang )
-            $langs_a[] = strval($lang);
+        $langs_a = $resourceOwner->getLanguages();
         $langs = $db->escape_string(implode(',', $langs_a));
 
         $_SESSION['osm_user_id'] = strval($user_id);
@@ -73,10 +75,6 @@ if( $action == 'login' ) {
             equery($db, "update osmauth_users set user_name = '$user_name', languages = '$langs' where user_id = $user_id");
         }
         $res->free();
-    } catch(OAuthException $E) {
-        echo("Exception:\n");
-        print_r($E);
-        exit;
     }
 } elseif( $user_id ) {
     if( $action == 'logout' ) {
@@ -236,15 +234,15 @@ h1 {
 </head>
 <body>
 <h1><?=$title ?></h1>
-<? if( !$user_id ) { ?>
+<?php if( !$user_id ) { ?>
 <div id="login"><a href="/login" class="button"><?=$login ?></a></div>
-<? } else {
+<?php } else {
     // we initialized user array before <html>
     if( !$user['active'] ) { ?>
 <div id="login">
 <a class="button" href="/enable"><?=$activate ?></a> <a class="button" href="/logout"><?=$logout ?></a>
 </div>
-<?  } else {
+<?php  } else {
     $result = equery($db, 'select token, onetime, last_used from osmauth_tokens where (onetime = 0 or last_used is null) and user_id = '.$user_id);
     $tokens = array();
     $master = array();

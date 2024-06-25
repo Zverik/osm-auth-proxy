@@ -1,5 +1,5 @@
 <? // OSM Auth Proxy tables initialization. Written by Ilya Zverev, licensed WTFPL.
-require('config.php');
+require('../www/config.php');
 
 $db = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 if( $db->connect_errno )
