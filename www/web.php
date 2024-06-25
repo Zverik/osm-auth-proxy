@@ -140,7 +140,7 @@ if( $user_id ) {
 
 // determine user language
 $found = false;
-foreach( split(',', $accept) as $lang ) {
+foreach( explode(',', $accept) as $lang ) {
     $p = strpos($lang, ';');
     if( $p !== false )
         $lang = substr($lang, 0, $p);
